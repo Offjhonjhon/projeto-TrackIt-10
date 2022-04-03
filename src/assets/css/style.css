@@ -1,0 +1,15 @@
+* {
+    box-sizing: border-box;
+}
+main{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #F2F2F2;
+    width: 100vw;
+    height: 100vh;
+}
+.root {
+    position: relative;
+    font-family: 'Lexend Deca', sans-serif;
+}
