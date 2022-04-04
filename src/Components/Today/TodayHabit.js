@@ -2,29 +2,25 @@ import styled from "styled-components";
 import UserContext  from "../../Context/Context";
 import axios from "axios";
 import {useContext, useState, useEffect} from "react";
-import {BsFillCheckSquareFill} from 'react-icons/bs'
+import {BsFillCheckSquareFill} from 'react-icons/bs';
 
 
-function TodayHabit({habit}) {
+function TodayHabit({habit, callback}) {
     const {name, done, highestSequence, currentSequence, id} = habit;
     const [URL, setURL] = useState('');
-    const [update, setUpdate] = useState(false);
     const {login} = useContext(UserContext);
 
     useEffect(() => {
         done 
         ? setURL(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`)
         : setURL(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`)
-    } , [update])       
+    } , [handleClick])       
     
     function handleClick() {
-        console.log(login.token)
-        console.log(URL);
-        const promisse = axios.post(URL, {headers : {'Authorization' : `Bearer ${login.token}`}})
-
-        setUpdate(!update)
+       
+        const promisse = axios.post(URL, {}, {headers: {'Authorization': `Bearer ${login.token}`}});
         promisse.then(response => {
-            console.log(response.data)
+            callback();
         })
         promisse.catch(error => {
             alert(error.response.data.message)
@@ -35,11 +31,14 @@ function TodayHabit({habit}) {
         <Today
             background={done ? 'green' : '#FFFFFF'}
             onClick={() => {handleClick()}}
-        >
+        >   
             <P className="name">{name}</P>
-            <P className="current">Sequência atual: {currentSequence} dias</P>
+            <P className="current">Sequência atual: <Span color={done ? '#8FC549' : '#666666'}>{currentSequence} dias</Span> </P>
             <P className="highest">Seu recorde: {highestSequence} dias</P>
-            <BsFillCheckSquareFill className="icon" />
+           <Div>
+                <BsFillCheckSquareFill className="icon" fontSize={69} color={done ? '#8FC549' : '#EBEBEB'} />
+           </Div>
+            
         </Today>);
 }
 
@@ -47,10 +46,11 @@ export default TodayHabit;
 
 
 const Today = styled.div`
+    position: relative;
     padding-top: 13px;
     width: 340px;
     height: 94px;
-    background: ${props => props.background};
+    background: #FFFFFF;
     border-radius: 5px;
     
 `
@@ -67,6 +67,16 @@ const P = styled.p`
         color: #666666;
         margin-bottom: 7px;
     }
+`
+
+const Div = styled.div`
+    position: absolute;
+    top: 13px;
+    right: 13px;  
+    
+`
+const Span = styled.span`
+    color: ${props => props.color};
 `
 
 

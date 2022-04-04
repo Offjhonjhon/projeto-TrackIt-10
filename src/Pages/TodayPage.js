@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import dayjs from 'dayjs/locale/pt-br' 
 import TodayHabit from "../Components/Today/TodayHabit";
+import PercentageContext from "../Context/PercentageContext";
 
 
 function Today() {
@@ -12,30 +13,34 @@ function Today() {
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today'
     const dayjs = require('dayjs') 
     const [habits, setHabits] = useState([]);
-    const [done, setDone] = useState([]);
-
-    // function getDone() {
-    //     habits.map(habit => {
-    //         if(habit.done) {
-    //             setDone(done => [...done, habit])
-    //         }
-    //     })
-    //     console.log(done)
-    // }
+    const [doneList, setDoneList] = useState([]);
+    const [updateHabits, setUpdateHabits] = useState(false);
+    const {percentage,setPercentage} = useContext(PercentageContext);
     
-
+    function saveDoneList() {
+        let doneArray = [];
+        habits.map((habit) => {
+            if (habit.done) {
+                doneList.push(habit.id);
+            }
+        })
+        setDoneList(doneArray);
+        
+        setPercentage(doneList.length / habits.length * 100);
+        
+    }
+    
     useEffect(() => {
+        console.log('passou aq')
         const promisse = axios.get(URL, {headers: {'Authorization' : `Bearer ${login.token}`}} )
         promisse.then(response => {
             setHabits(response.data)
-            // getDone()
-        }
-        )
+            saveDoneList()
+        })
         promisse.catch(error => {
             alert(error.response.data.message)
-        }
-        )
-    }, [])
+        })
+    }, [updateHabits])
     
 
     return (
@@ -43,7 +48,7 @@ function Today() {
             <H1>{dayjs().locale('pt-br').format('dddd, DD/MM')}</H1>
             <HabitsContainer>
                 {habits.map(habit => {
-                    return <TodayHabit callback={setDone} key={habit.id} habit={habit} />
+                    return <TodayHabit callback={() => setUpdateHabits(!updateHabits)} key={habit.id} habit={habit} />
                 })}
             </HabitsContainer>
         </Main>
@@ -53,7 +58,8 @@ function Today() {
 export default Today;
 
 const Main = styled.main`
-   
+   min-height: 100vh;
+   padding-bottom: 110px;
 `
 
 const H1 = styled.h1`

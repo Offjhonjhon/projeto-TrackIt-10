@@ -3,10 +3,11 @@ import {CircularProgressbar} from "react-circular-progressbar";
 import {useNavigate, useLocation} from "react-router-dom";
 import {useState} from "react";
 import React from 'react';
+import {useContext} from "react";
+import PercentageContext from "../Context/PercentageContext";
 
 function Footer() {
-
-    const value = 0.3;
+    const {percentage} = useContext(PercentageContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -18,7 +19,7 @@ function Footer() {
           : setDisplay('flex');
     } , [location]);
 
-    const percentage = 100 * value;
+    
     return(
         <FooterContainer display={display}>
              <Button className="habits" onClick={() => {navigate('/habitos')}}>Hábitos</Button>
