@@ -7,7 +7,8 @@ main{
     left: 0;
     background-color: #F2F2F2;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+    
 }
 .root {
     position: relative;

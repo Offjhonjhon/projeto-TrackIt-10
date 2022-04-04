@@ -2,9 +2,11 @@ import styled from "styled-components";
 import WeekdayForm from "./WeekdayForm";
 import { useState } from "react";
 import axios from "axios";
+import {ThreeDots} from 'react-loader-spinner';
 
-function CreateHabitForm({display, token}) {
+function CreateHabitForm({display, token, callback}) {
     const weekdays = ['D','S', 'T', 'Q', 'Q', 'S', 'S'];
+    const [loading, setLoading] = useState(false);
     const [days, setDays] = useState([]);
     const [habitName, setHabitName] = useState('');
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits';
@@ -24,39 +26,53 @@ function CreateHabitForm({display, token}) {
         setDays(newDays);
     }
 
-    function HandleSubmit(e) {
-        e.preventDefault();
-        const promisse = axios.post(URL, habit, {headers: {'Authorization' : `Bearer ${token}`}});
-        promisse.then(response => {
-            console.log(response);
+    function HandleSubmit(event) {
+        setLoading(true);
+        event.preventDefault();
+        const promisse = axios.post(URL, habit, {headers: {'Authorization': `Bearer ${token}`}});
+            promisse.then(response => {
+            setHabitName('');
+            setDays([]);
+            callback();
+            setLoading(false);
         })
         promisse.catch(error => {
-            console.log(error);
+            alert(error);
+            setLoading(false);
         })
     }
-    
-    
+
     return (
-        <Form className="habit-form" display={display} onSubmit={() => HandleSubmit()}>
+        <Form className="habit-form" display={display} onSubmit={HandleSubmit}>
             <Input 
                 value={habitName} 
                 className="habit-name" 
                 type="text" 
                 placeholder="Nome do Hábito" 
                 onChange={(e) => {setHabitName(e.target.value)}}
+                required
+                disabled={loading}
             />
                <WeekdaysContainer>
                 {weekdays.map((day, index) => {
                     return <WeekdayForm     
                                 key={index} 
                                 day={day}
-                                callback={() => HandleWeekday(index + 1)}
+                                callback={() => {HandleWeekday(index)}}
+                                disabled={loading}
                             ></WeekdayForm>
                     })}
                </WeekdaysContainer>
             <ButtonsContainer>
-                <Button type="submit" className="save">Cancelar</Button>
-                <Button className="cancel">Salvar</Button>
+                <Button type="button" disabled={loading} className="cancel" onClick={() => callback()}>Cancelar</Button>
+                <Button type="submit" disabled={loading} className="save"> {loading ?<ThreeDots
+                         className='loader'
+                         height="30"
+                         width="50"
+                         color='white'
+                         ariaLabel='loading'
+                       /> : 'Salvar'}
+                </Button>
             </ButtonsContainer>
         </Form>
     );
@@ -77,6 +93,9 @@ const Form = styled.form`
     }
 `
 const Button = styled.button`
+    display: grid;
+    place-items: center;
+    width: 100px;
     width: 84px;
     height: 35px;
     border: none;
@@ -84,12 +103,13 @@ const Button = styled.button`
     font-family: 'Lexend Deca';
     font-size: 15.976px;
     line-height: 20px;
+    opacity: ${props => props.disabled ? '0.7' : '1'};
     
-    &.save {
+    &.cancel {
         background: #FFFFFF;
         color: #52B6FF;
     }
-    &.cancel {
+    &.save {
         background: #52B6FF;
         color: #FFFFFF;
     }
@@ -101,10 +121,7 @@ const WeekdaysContainer = styled.div`
    gap: 4px;
    font-size: 19.976px;
 
-   
-
 `
-
 const Input = styled.input`
     width: 303px;
     height: 45px;
@@ -131,6 +148,7 @@ const ButtonsContainer = styled.div`
     gap: 20px;
     margin-top: 30px;
     margin-left: 133px;
+    margin-bottom: 20px;
 `
 
 

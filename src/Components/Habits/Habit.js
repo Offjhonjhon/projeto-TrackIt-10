@@ -1,15 +1,15 @@
 import styled from "styled-components";
 import WeekDay from "./WeekDay";
 import { useContext, useState, useEffect } from "react";
-import UserContext from "../Context/Context";
+import UserContext from "../../Context/Context";
 import axios from "axios";
-import trash from "./../assets/trash.svg";
+import trash from "./../../assets/trash.svg";
 
 
 function Habit({habit, callback}) {
     const {login} = useContext(UserContext);
     const {token} = login;
-    const weekdays = {1 : 'D',2 : 'S',3 : 'T',4 : 'Q',5 : 'Q',6 : 'S',7 : 'S'};
+    const weekdays = {0 : 'D',1 : 'S',2 : 'T',3 : 'Q',4 : 'Q',5 : 'S',6 : 'S'};
     const [habitState, setHabitState] = useState(true);
     const {days} = habit;
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habit.id}`;
@@ -27,7 +27,6 @@ function Habit({habit, callback}) {
             })
         }
     }
-
 
     return (
        <HabitContainer>

@@ -2,13 +2,15 @@ import styled from "styled-components";
 import { useState } from "react";
 function WeekdayForm({day, callback}) {
     const [selected, setSelected] = useState(false);
-
+    
     return(
             <Weekday 
                 key={day}
                 className={selected ? 'selected' : 'not-selected'}
                 onClick={() => {setSelected(!selected); callback()}}
-            >{day}</Weekday>
+                >{day}
+            </Weekday>
+        
     );
 }
 export default WeekdayForm;
@@ -25,7 +27,7 @@ const Weekday = styled.div`
     &.not-selected {
         color: #DBDBDB;
    }
-   &.selected {
+    &.selected {
         background: #CFCFCF;
         color: #FFFFFF;
    }

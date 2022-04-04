@@ -3,8 +3,8 @@ import {useState, useEffect} from "react";
 import axios from "axios";
 import {useContext} from "react";
 import UserContext from "../Context/Context";
-import Habit from "../Components/Habit";
-import CreateHabitForm from "../Components/CreateHabitForm";
+import Habit from "../Components/Habits/Habit";
+import CreateHabitForm from "../Components/Habits/CreateHabitForm";
 
 function Habits() {
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits';
@@ -35,10 +35,10 @@ function Habits() {
                         <Div className="add-habit">
                             <P className="habits">Meus Hábitos</P>
                             <Button onClick={() => setDisplay('flex')}>+</Button>
-                            <P className="empty-habits">Você não tem nenhum hábito cadastrado ainda.
-                                Adicione um hábito para começar a trackear!</P>
                         </Div>
-                        <CreateHabitForm token={login.token} display={display}/>
+                        <CreateHabitForm token={login.token} display={display} callback={() => {setUpdate(!update); setDisplay('none')}}/>
+                        <P className="empty-habits">Você não tem nenhum hábito cadastrado ainda.
+                                Adicione um hábito para começar a trackear!</P>
                     </Main>
                 
             :   
@@ -47,7 +47,7 @@ function Habits() {
                         <P className="habits">Meus Hábitos</P>
                         <Button onClick={() => setDisplay('flex')}>+</Button>
                     </Div>
-                    <CreateHabitForm token={login.token} display={display}/>
+                    <CreateHabitForm token={login.token} display={display} callback={() => {setUpdate(!update); setDisplay('none')}}/>
                     <HabitsContainer>
                             {habits.map(habit => {
                                 return <Habit key={habit.id} habit={habit} callback={() => setUpdate(!update)}/>
@@ -61,9 +61,11 @@ function Habits() {
 export default Habits;
 
 const Main = styled.main`
+    heigth: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 100px;
 `
 const Div = styled.div`
     &.add-habit {
@@ -87,7 +89,7 @@ const P = styled.p`
         color: #666666;
         margin-left : 17px;
         margin-right: 20px;
-        padding-top: 60px;
+        padding-top: 40px;
         
     }
 `
@@ -107,8 +109,8 @@ const Button = styled.button`
     place-items: center;
 `;
 const HabitsContainer = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column;
     place-items: center;
     grid-gap: 20px;
     margin-top: 50px;
